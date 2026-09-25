@@ -1,0 +1,129 @@
+﻿@model ZavrsniRad.Models.SubjektiAdresa
+
+@{
+    var prefiks = ViewData["Prefiks"] as string ?? "adresa";
+    var povratniSubjektId = ViewData["PovratniSubjektId"] as int? ?? Model.SubjektId;
+    var idModala = prefiks + "Modal";
+}
+
+<div class="modal fade" id="@idModala" tabindex="-1"
+     aria-labelledby="@(idModala)Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="DodajAdresu" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" id="@(prefiks)Id" />
+                <input type="hidden" asp-for="SubjektId" />
+                <input type="hidden" name="povratniSubjektId" value="@povratniSubjektId" />
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="@(idModala)Label">
+                        Dodaj novu adresu
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vrsta adrese</label>
+
+                            <select asp-for="VrstaAdreseId"
+                                    id="@(prefiks)VrstaAdreseId"
+                                    class="form-select"
+                                    asp-items="ViewBag.VrsteAdresa as SelectList">
+                                <option value="">-- Odaberite vrstu adrese --</option>
+                            </select>
+
+                            <span asp-validation-for="VrstaAdreseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Naselje</label>
+
+                            <select asp-for="NaseljeId"
+                                    id="@(prefiks)NaseljeId"
+                                    class="form-select"
+                                    asp-items="ViewBag.Naselja as SelectList">
+                                <option value="">-- Odaberite naselje --</option>
+                            </select>
+
+                            <span asp-validation-for="NaseljeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label asp-for="Ulica" class="form-label"></label>
+                            <input asp-for="Ulica" id="@(prefiks)Ulica" class="form-control" />
+                            <span asp-validation-for="Ulica" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="KucniBroj" class="form-label"></label>
+                            <input asp-for="KucniBroj" id="@(prefiks)KucniBroj" class="form-control" />
+                            <span asp-validation-for="KucniBroj" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const prefiks = '@prefiks';
+        const modal = document.getElementById(prefiks + 'Modal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            const naslov = document.getElementById(prefiks + 'ModalLabel');
+            const id = document.getElementById(prefiks + 'Id');
+            const ulica = document.getElementById(prefiks + 'Ulica');
+            const kucniBroj = document.getElementById(prefiks + 'KucniBroj');
+            const vrstaAdrese = document.getElementById(prefiks + 'VrstaAdreseId');
+            const naselje = document.getElementById(prefiks + 'NaseljeId');
+
+            if (!gumb || !gumb.getAttribute('data-id')) {
+                naslov.textContent = 'Dodaj novu adresu';
+
+                id.value = '0';
+                ulica.value = '';
+                kucniBroj.value = '';
+                vrstaAdrese.value = '';
+                naselje.value = '';
+
+                return;
+            }
+
+            naslov.textContent = 'UreÄ‘ivanje adrese';
+
+            id.value = gumb.getAttribute('data-id');
+            ulica.value = gumb.getAttribute('data-ulica');
+            kucniBroj.value = gumb.getAttribute('data-kucnibroj');
+            vrstaAdrese.value = gumb.getAttribute('data-vrstaadreseid');
+            naselje.value = gumb.getAttribute('data-naseljeid');
+        });
+    })();
+</script>

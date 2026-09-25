@@ -1,50 +1,181 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="hr">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ZavrsniRad</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ZavrsniRad.styles.css" asp-append-version="true" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - PetTracker</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/ZavrsniRad.styles.css"
+          asp-append-version="true" />
 </head>
-<body>
+
+<body class="d-flex flex-column min-vh-100 bg-secondary-subtle">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ZavrsniRad</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        @{
+            bool jeAdministratorSustava =
+                User.IsInRole(ZavrsniRad.Models.Enums.RoleNazivi.AdministratorSustava);
+        }
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+            <div class="container-fluid px-4">
+
+                <a class="navbar-brand fw-bold"
+                   asp-area=""
+                   asp-controller="@(jeAdministratorSustava ? "Subjekti" : "Ljubimci")"
+                   asp-action="Index">
+                    PetTracker
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavigation"
+                        aria-controls="mainNavigation"
+                        aria-expanded="false"
+                        aria-label="Otvori navigaciju">
+
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+                <div class="collapse navbar-collapse"
+                     id="mainNavigation">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        @if (!jeAdministratorSustava)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area=""
+                                   asp-controller="Subjekti"
+                                   asp-action="Index">
+                                    Moj profil
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area=""
+                                   asp-controller="Ljubimci"
+                                   asp-action="Index">
+                                    Ljubimci
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="administracijaDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Administracija
+                                </a>
+
+                                <ul class="dropdown-menu"
+                                    aria-labelledby="administracijaDropdown">
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Subjekti"
+                                           asp-action="Index">
+                                            Subjekti
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Administracija"
+                                           asp-action="PravniOblici">
+                                            Pravni oblici
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Administracija"
+                                           asp-action="Djelatnosti">
+                                            Djelatnosti
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        }
+
                     </ul>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <ul class="navbar-nav ms-auto
+                            align-items-lg-center gap-lg-2">
+
+                            <li class="nav-item">
+                                <span class="navbar-text text-white">
+                                    Korisnik:
+                                    <strong>
+                                        @User.Identity.Name
+                                    </strong>
+                                </span>
+                            </li>
+
+                            @await Component.InvokeAsync("PrebacivanjeProfila")
+
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm
+                                    ms-lg-2 mt-2 mt-lg-0"
+                                   asp-area=""
+                                   asp-controller="Account"
+                                   asp-action="Odjava">
+                                    Odjava
+                                </a>
+                            </li>
+
+                        </ul>
+                    }
+
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ZavrsniRad - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main"
+          class="container-fluid flex-grow-1 px-4 py-4">
+
+        @RenderBody()
+
+    </main>
+
+    <footer class="border-top bg-light text-secondary py-3 mt-auto">
+        <div class="container-fluid px-4">
+            &copy; 2026 PetTracker
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

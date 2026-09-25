@@ -1,0 +1,42 @@
+﻿@model List<ZavrsniRad.Models.ViewModels.ProfilViewModel>
+
+@{
+    var aktivan = Model.FirstOrDefault(p => p.Aktivan) ?? Model.First();
+}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       id="prebacivanjeProfilaDropdown"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+        Profil: <strong>@aktivan.Naziv</strong>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end"
+        aria-labelledby="prebacivanjeProfilaDropdown">
+
+        @foreach (var profil in Model)
+        {
+            <li>
+                <form asp-controller="Account"
+                      asp-action="PromijeniProfil"
+                      method="post"
+                      class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="rasporedId" value="@profil.RasporedId" />
+
+                    <button type="submit"
+                            class="dropdown-item @(profil.Aktivan ? "active" : "")"
+                            @(profil.Aktivan ? "disabled" : "")>
+                        @(profil.JePoslovni ? "Poslovni profil" : "Privatni profil") - @profil.Naziv
+                    </button>
+                </form>
+            </li>
+        }
+
+    </ul>
+</li>

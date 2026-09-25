@@ -1,0 +1,145 @@
+﻿@model IEnumerable<ZavrsniRad.Models.ViewModels.SubjektPopisViewModel>
+
+@{
+    ViewData["Title"] = "Subjekti";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="mb-1">Subjekti</h2>
+
+            <p class="text-secondary mb-0">
+                Administracija podataka o subjektima.
+            </p>
+        </div>
+    </div>
+
+    @if (TempData["GreskaBrisanjaSubjekta"] != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @TempData["GreskaBrisanjaSubjekta"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0 ">
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-bordered">
+
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>Ime</th>
+                                        <th>Prezime</th>
+                                        <th>Naziv tvrtke</th>
+                                        <th>Email</th>
+                                        <th>Telefon</th>
+                                        <th>Vrsta osobe</th>
+                                        <th>Vrsta subjekta</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+
+                                        <th class="text-center">
+                                            Akcije
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var stavka in Model)
+                                    {
+                                        var item = stavka.Subjekt;
+
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                @item.Ime
+                                            </td>
+
+                                            <td class="fw-semibold">
+                                                @item.Prezime
+                                            </td>
+
+                                            <td>
+                                                @item.NazivTvrtke
+                                            </td>
+
+                                            <td>
+                                                @item.Email
+                                            </td>
+
+                                            <td>
+                                                @item.Telefon
+                                            </td>
+
+                                            <td>
+                                                @item.SubjektiOsobe?.Naziv
+                                            </td>
+
+                                            <td>
+                                                @item.SubjektiVrste?.Naziv
+                                            </td>
+
+                                            <td>
+                                                @stavka.Role
+                                            </td>
+
+                                            <td>
+                                                @(item.Status ? "Aktivan" : "Neaktivan")
+                                            </td>
+
+                                            <td class="text-center text-nowrap">
+                                                @if (item.Status && !stavka.JePrijavljeniAdministrator)
+                                                {
+                                                    var nazivSubjekta = string.IsNullOrWhiteSpace(item.NazivTvrtke)
+                                                        ? $"{item.Ime} {item.Prezime}"
+                                                        : item.NazivTvrtke;
+
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteSubjektModal"
+                                                            data-id="@item.Id"
+                                                            data-naziv="@nazivSubjekta">
+                                                        Deaktiviraj
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <h5 class="mb-2">
+                                Nema evidentiranih subjekata
+                            </h5>
+
+                            <p class="text-secondary mb-0">
+                                TrenutaÄno nema unesenih podataka o subjektima.
+                            </p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@await Html.PartialAsync("_DeleteSubjektModal")
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

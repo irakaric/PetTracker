@@ -1,0 +1,88 @@
+﻿
+<div class="modal fade" id="pravniOblikModal" tabindex="-1"
+     aria-labelledby="pravniOblikModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="SpremiPravniOblik" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="Id" id="pravniOblikId" value="0" />
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="pravniOblikModalLabel">
+                        Dodaj novi pravni oblik
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pravniOblikNaziv">
+                            Naziv pravnog oblika
+                        </label>
+
+                        <input name="Naziv" id="pravniOblikNaziv"
+                               class="form-control" maxlength="100" required />
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="Status" id="pravniOblikStatus" value="true" checked />
+
+                        <label class="form-check-label" for="pravniOblikStatus">
+                            Aktivan
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById('pravniOblikModal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            const naslov = document.getElementById('pravniOblikModalLabel');
+            const id = document.getElementById('pravniOblikId');
+            const naziv = document.getElementById('pravniOblikNaziv');
+            const status = document.getElementById('pravniOblikStatus');
+
+            if (!gumb || !gumb.getAttribute('data-id')) {
+                naslov.textContent = 'Dodaj novi pravni oblik';
+
+                id.value = '0';
+                naziv.value = '';
+                status.checked = true;
+
+                return;
+            }
+
+            naslov.textContent = 'UreÄ‘ivanje pravnog oblika';
+
+            id.value = gumb.getAttribute('data-id');
+            naziv.value = gumb.getAttribute('data-naziv');
+            status.checked = gumb.getAttribute('data-status') === 'true';
+        });
+    })();
+</script>

@@ -1,0 +1,394 @@
+﻿@model ZavrsniRad.Models.Subjekti
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+
+@{
+    ViewData["Title"] = "Moj profil";
+
+    var adrese = ViewBag.Adrese as List<ZavrsniRad.Models.SubjektiAdresa>
+        ?? new List<ZavrsniRad.Models.SubjektiAdresa>();
+
+    var poslovniProfil = ViewBag.PoslovniProfil as ZavrsniRad.Models.Subjekti;
+
+    var poslovniDetalji = ViewBag.PoslovniProfilDetalji as ZavrsniRad.Models.SubjektiDetalji;
+
+    var poslovneAdrese = ViewBag.PoslovneAdrese as List<ZavrsniRad.Models.SubjektiAdresa>
+        ?? new List<ZavrsniRad.Models.SubjektiAdresa>();
+
+    var otvoriTab = ViewBag.OtvoriTab as string;
+
+    var nazivPrivatnog = $"{Model.Ime} {Model.Prezime}".Trim();
+
+    var nazivPoslovnog = string.IsNullOrWhiteSpace(poslovniProfil?.NazivTvrtke)
+        ? $"{poslovniProfil?.Ime} {poslovniProfil?.Prezime}".Trim()
+        : poslovniProfil!.NazivTvrtke!;
+
+    var sveAdrese = adrese
+        .Select(a => new ZavrsniRad.Models.ViewModels.AdresaPrikazViewModel
+        {
+            Adresa = a,
+            NazivSubjekta = nazivPrivatnog,
+            Prefiks = "adresa"
+        })
+        .Concat(poslovneAdrese
+            .Select(a => new ZavrsniRad.Models.ViewModels.AdresaPrikazViewModel
+            {
+                Adresa = a,
+                NazivSubjekta = nazivPoslovnog,
+                Prefiks = "poslovnaAdresa"
+            }))
+        .ToList();
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="mb-1">
+                Moj profil
+            </h2>
+
+            <p class="text-secondary mb-0">
+                @Model.Ime @Model.Prezime
+            </p>
+        </div>
+
+        @if (poslovniProfil == null)
+        {
+            <div class="col-auto">
+                <button type="button"
+                        class="btn btn-success"
+                        data-bs-toggle="modal"
+                        data-bs-target="#poslovniProfilModal">
+                    Dodaj poslovni profil
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Osnovni podaci</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Status" />
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="Ime" class="form-label"></label>
+                        <input asp-for="Ime" class="form-control" />
+                        <span asp-validation-for="Ime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Prezime" class="form-label"></label>
+                        <input asp-for="Prezime" class="form-control" />
+                        <span asp-validation-for="Prezime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Telefon" class="form-label"></label>
+                        <input asp-for="Telefon" type="tel" class="form-control" />
+                        <span asp-validation-for="Telefon" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Vrsta osobe</label>
+
+                        <select asp-for="VrstaOsobeId"
+                                class="form-select"
+                                asp-items="ViewBag.VrsteOsoba as SelectList"
+                                disabled>
+                            <option value="">-- Odaberite vrstu osobe --</option>
+                        </select>
+
+                        <input type="hidden" asp-for="VrstaOsobeId" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Vrsta subjekta</label>
+
+                        <select asp-for="VrstaSubjektaId"
+                                class="form-select"
+                                asp-items="ViewBag.VrsteSubjekata as SelectList"
+                                disabled>
+                            <option value="">-- Odaberite vrstu subjekta --</option>
+                        </select>
+
+                        <input type="hidden" asp-for="VrstaSubjektaId" />
+                    </div>
+
+                    <input type="hidden" asp-for="NazivTvrtke" />
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    @if (poslovniProfil != null)
+    {
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Poslovni profil</h5>
+            </div>
+
+            <div class="card-body">
+
+                <form asp-action="SpremiPoslovniProfil" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="PoslovniSubjektId" value="@poslovniProfil.Id" />
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vrsta osobe</label>
+                            <input class="form-control" value="@poslovniProfil.SubjektiOsobe?.Naziv" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vrsta subjekta</label>
+                            <input class="form-control" value="@poslovniProfil.SubjektiVrste?.Naziv" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ime</label>
+                            <input name="Ime" class="form-control" value="@poslovniProfil.Ime" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Prezime</label>
+                            <input name="Prezime" class="form-control" value="@poslovniProfil.Prezime" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Naziv tvrtke</label>
+                            <input name="NazivTvrtke" class="form-control" value="@poslovniProfil.NazivTvrtke" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input name="Email" type="email" class="form-control" value="@poslovniProfil.Email" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Telefon</label>
+                            <input name="Telefon" type="tel" class="form-control" value="@poslovniProfil.Telefon" />
+                        </div>
+
+                        @if (poslovniDetalji != null)
+                        {
+                            <div class="col-md-4">
+                                <label class="form-label">OIB</label>
+                                <input name="OIB" class="form-control" value="@poslovniDetalji.OIB" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">MatiÄni broj</label>
+                                <input name="MB" class="form-control" value="@poslovniDetalji.MB" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">MatiÄni broj obrta</label>
+                                <input name="MBO" class="form-control" value="@poslovniDetalji.MBO" />
+                            </div>
+
+                            @if (poslovniProfil.VrstaOsobeId == (int)ZavrsniRad.Models.Enums.VrstaOsobe.PravnaOsoba)
+                            {
+                                <div class="col-md-4">
+                                    <label class="form-label">MatiÄni broj subjekta</label>
+                                    <input name="MBS" class="form-control" value="@poslovniDetalji.MBS" />
+                                </div>
+                            }
+
+                            <div class="col-md-4">
+                                <label class="form-label">Datum osnivanja</label>
+                                <input name="DatumOsnivanja" type="date" class="form-control"
+                                       value="@(poslovniDetalji.DatumOsnivanja?.ToString("yyyy-MM-dd"))" />
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Pravni oblik</label>
+                                <input class="form-control" value="@poslovniDetalji.PravniOblici?.Naziv" disabled />
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Djelatnost</label>
+                                <input class="form-control"
+                                       value="@poslovniDetalji.Djelatnosti?.Oznaka - @poslovniDetalji.Djelatnosti?.Naziv" disabled />
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-success">
+                            Spremi
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white pb-0">
+            <ul class="nav nav-tabs card-header-tabs" id="subjektTabs" role="tablist">
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active"
+                            id="adrese-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#adrese"
+                            type="button"
+                            role="tab"
+                            aria-controls="adrese"
+                            aria-selected="true">
+                        Adrese
+                    </button>
+                </li>
+
+                    </ul>
+                </div>
+
+        <div class="tab-content" id="subjektTabsContent">
+
+            <div class="tab-pane fade show active"
+                 id="adrese"
+                 role="tabpanel"
+                 aria-labelledby="adrese-tab">
+
+                @await Html.PartialAsync("_AdreseTablica", sveAdrese,
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "PovratniSubjektId", Model.Id }
+                    })
+
+                <div class="d-flex justify-content-end p-3 gap-2">
+                    <button type="button"
+                            class="btn btn-success"
+                            data-bs-toggle="modal"
+                            data-bs-target="#adresaModal">
+                        Dodaj adresu privatnog profila
+                    </button>
+
+                    @if (poslovniProfil != null)
+                    {
+                        <button type="button"
+                                class="btn btn-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#poslovnaAdresaModal">
+                            Dodaj adresu poslovnog profila
+                        </button>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@await Html.PartialAsync("_AdresaModal",
+    ViewBag.NovaAdresa as ZavrsniRad.Models.SubjektiAdresa
+        ?? new ZavrsniRad.Models.SubjektiAdresa
+        {
+            SubjektId = Model.Id,
+            Ulica = "",
+            KucniBroj = ""
+        },
+    new ViewDataDictionary(ViewData)
+    {
+        { "Prefiks", "adresa" },
+        { "PovratniSubjektId", Model.Id }
+    })
+
+@await Html.PartialAsync("_DeleteAdresaModal")
+
+@if (poslovniProfil != null)
+{
+    @await Html.PartialAsync("_AdresaModal",
+        new ZavrsniRad.Models.SubjektiAdresa
+        {
+            SubjektId = poslovniProfil.Id,
+            Ulica = "",
+            KucniBroj = ""
+        },
+        new ViewDataDictionary(ViewData)
+        {
+            { "Prefiks", "poslovnaAdresa" },
+            { "PovratniSubjektId", Model.Id }
+        })
+}
+else
+{
+    @await Html.PartialAsync("_PoslovniProfilModal",
+        ViewBag.PoslovniProfilUnos as ZavrsniRad.Models.ViewModels.PoslovniProfilViewModel
+            ?? new ZavrsniRad.Models.ViewModels.PoslovniProfilViewModel(),
+        new ViewDataDictionary(ViewData)
+        {
+            { "SubjektId", Model.Id }
+        })
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (ViewBag.OtvoriAdresaModal == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Modal(
+                    document.getElementById('adresaModal')).show();
+            });
+        </script>
+    }
+
+    @if (ViewBag.OtvoriPoslovniProfilModal == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Modal(
+                    document.getElementById('poslovniProfilModal')).show();
+            });
+        </script>
+    }
+
+    @if (!string.IsNullOrEmpty(otvoriTab))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tab = document.getElementById('@(otvoriTab)-tab');
+
+                if (tab) {
+                    new bootstrap.Tab(tab).show();
+                }
+            });
+        </script>
+    }
+}

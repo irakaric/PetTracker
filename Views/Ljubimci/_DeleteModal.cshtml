@@ -1,0 +1,58 @@
+﻿
+<div class="modal fade" id="deleteLjubimacModal" tabindex="-1"
+     aria-labelledby="deleteLjubimacModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" id="deleteLjubimacId" />
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteLjubimacModalLabel">
+                        Brisanje ljubimca
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Jeste li sigurni da Å¾elite obrisati ljubimca
+                        <strong id="deleteLjubimacNaziv"></strong>?
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">
+                        ObriÅ¡i
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById('deleteLjubimacModal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            document.getElementById('deleteLjubimacId').value =
+                gumb.getAttribute('data-id');
+
+            document.getElementById('deleteLjubimacNaziv').textContent =
+                gumb.getAttribute('data-naziv');
+        });
+    })();
+</script>

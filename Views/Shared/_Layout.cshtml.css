@@ -7,8 +7,21 @@ a.navbar-brand {
   word-break: break-all;
 }
 
-a {
+/* Linkovi u navigacijskoj traci koriste Bootstrap navbar boje,
+   ostali linkovi koriste zadanu boju aplikacije */
+a:not(.nav-link):not(.navbar-brand):not(.dropdown-item) {
   color: #0077cc;
+}
+
+/* Dropdown "Administracija" mora izgledati jednako kao ostale stavke izbornika */
+.navbar-dark .navbar-nav .nav-link.show,
+.navbar-dark .navbar-nav .nav-link.active {
+  color: var(--bs-navbar-color);
+}
+
+.navbar-dark .navbar-nav .nav-link.show:hover,
+.navbar-dark .navbar-nav .nav-link.active:hover {
+  color: var(--bs-navbar-hover-color);
 }
 
 .btn-primary {

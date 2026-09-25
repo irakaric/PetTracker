@@ -1,0 +1,204 @@
+﻿@model ZavrsniRad.Models.SubjektiRasporedi
+
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>PetTracker - Registracija</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/ZavrsniRad.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100">
+
+            <div class="col-md-6 bg-success text-white
+                d-flex align-items-center justify-content-center">
+
+                <div class="col-10 col-lg-8 py-5">
+                    <h1 class="display-4 fw-bold mb-3">
+                        PetTracker
+                    </h1>
+
+                    <p class="fs-5 mb-0">
+                        Izradite korisniÄki raÄun i zapoÄnite
+                        s praÄ‡enjem podataka o svojim ljubimcima.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 bg-white
+                d-flex align-items-center justify-content-center">
+
+                <div class="col-10 col-lg-9 py-5">
+
+                    <h2 class="fw-bold mb-2">
+                        Registracija
+                    </h2>
+
+                    <p class="text-secondary mb-4">
+                        Unesite osobne podatke i podatke za prijavu.
+                    </p>
+
+                    <form asp-controller="Account"
+                          asp-action="Registracija"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <h5 class="text-success mb-3">
+                            Osobni podaci
+                        </h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-lg-6">
+                                <label asp-for="Subjekti!.Ime"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Subjekti!.Ime"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Subjekti!.Ime"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label asp-for="Subjekti!.Prezime"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Subjekti!.Prezime"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Subjekti!.Prezime"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label asp-for="Subjekti!.Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Subjekti!.Email"
+                                       type="email"
+                                       class="form-control"
+                                       autocomplete="email" />
+
+                                <span asp-validation-for="Subjekti!.Email"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label asp-for="Subjekti!.Telefon"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Subjekti!.Telefon"
+                                       type="tel"
+                                       class="form-control"
+                                       autocomplete="tel" />
+
+                                <span asp-validation-for="Subjekti!.Telefon"
+                                      class="text-danger">
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="text-success mb-3">
+                            Podaci za prijavu
+                        </h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-lg-6">
+                                <label asp-for="KorisniciAplikacije!.Username"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="KorisniciAplikacije!.Username"
+                                       class="form-control"
+                                       autocomplete="username" />
+
+                                <span asp-validation-for="KorisniciAplikacije!.Username"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label asp-for="KorisniciAplikacije!.Password"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="KorisniciAplikacije!.Password"
+                                       type="password"
+                                       class="form-control"
+                                       autocomplete="new-password" />
+
+                                <span asp-validation-for="KorisniciAplikacije!.Password"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-success w-100 mt-4">
+                            Registriraj se
+                        </button>
+
+                        <hr class="my-4" />
+
+                        <div class="text-center">
+                            <span class="text-secondary">
+                                VeÄ‡ imate korisniÄki raÄun?
+                            </span>
+
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               class="link-success fw-semibold
+                                text-decoration-none">
+                                Prijavite se
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+</body>
+</html>

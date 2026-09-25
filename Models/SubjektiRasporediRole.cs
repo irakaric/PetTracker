@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZavrsniRad.Models
 {
-    public class KorisniciAplikacijeRole
+    public class SubjektiRasporediRole
     {
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("KorisniciAplikacije")]
-        public int KorisnikAplikacijeId { get; set; }
-        public virtual KorisniciAplikacije? KorisniciAplikacije { get; set; }
+        [ForeignKey("SubjektiRasporedi")]
+        public int RasporedSubjektaId { get; set; }
+        public virtual SubjektiRasporedi? SubjektiRasporedi { get; set; }
 
         [ForeignKey("Role")]
         public int RolaId { get; set; }

@@ -1,0 +1,161 @@
+﻿@model ZavrsniRad.Models.Zivotinje
+
+<div class="modal fade" id="createLjubimacModal" tabindex="-1"
+     aria-labelledby="createLjubimacModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="createLjubimacModalLabel">
+                        Dodaj novog ljubimca
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label asp-for="Naziv" class="form-label"></label>
+                            <input asp-for="Naziv" class="form-control" />
+                            <span asp-validation-for="Naziv" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Boja" class="form-label"></label>
+                            <input asp-for="Boja" class="form-control" />
+                            <span asp-validation-for="Boja" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="vrstaZivotinjaId" class="form-label">
+                                Vrsta Å¾ivotinje
+                            </label>
+
+                            <select id="vrstaZivotinjaId"
+                                    name="vrstaZivotinjaId"
+                                    class="form-select"
+                                    asp-items="ViewBag.VrsteZivotinja as SelectList">
+                                <option value="">-- Odaberite vrstu --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Pasmina</label>
+
+                            <select asp-for="VrstaZivotinjePasminaId"
+                                    id="VrstaZivotinjePasminaId"
+                                    class="form-select"
+                                    data-odabrano="@Model.VrstaZivotinjePasminaId"
+                                    disabled>
+                                <option value="">-- Prvo odaberite vrstu --</option>
+                            </select>
+
+                            <span asp-validation-for="VrstaZivotinjePasminaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Spol</label>
+
+                            <select asp-for="SpolId"
+                                    class="form-select"
+                                    asp-items="ViewBag.Spol as SelectList">
+                                <option value="">-- Odaberite spol --</option>
+                            </select>
+
+                            <span asp-validation-for="SpolId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+
+                            <select asp-for="StatusId"
+                                    class="form-select"
+                                    asp-items="ViewBag.StatusLjubimca as SelectList">
+                                <option value="">-- Odaberite status --</option>
+                            </select>
+
+                            <span asp-validation-for="StatusId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DatumRodenja" class="form-label"></label>
+                            <input asp-for="DatumRodenja" type="date" class="form-control" />
+                            <span asp-validation-for="DatumRodenja" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const vrsta = document.getElementById('vrstaZivotinjaId');
+        const pasmina = document.getElementById('VrstaZivotinjePasminaId');
+        const url = '@Url.Action("PasminePoVrsti", "Ljubimci")';
+
+        function ucitajPasmine(odabrano) {
+            const vrstaId = vrsta.value;
+
+            pasmina.innerHTML = '';
+            pasmina.disabled = true;
+
+            if (!vrstaId) {
+                pasmina.insertAdjacentHTML('beforeend',
+                    '<option value="">-- Prvo odaberite vrstu --</option>');
+                return;
+            }
+
+            fetch(url + '?vrstaZivotinjaId=' + encodeURIComponent(vrstaId))
+                .then(function (odgovor) { return odgovor.json(); })
+                .then(function (podaci) {
+                    pasmina.insertAdjacentHTML('beforeend',
+                        '<option value="">-- Odaberite pasminu --</option>');
+
+                    podaci.forEach(function (stavka) {
+                        const opcija = document.createElement('option');
+                        opcija.value = stavka.id;
+                        opcija.textContent = stavka.naziv;
+                        pasmina.appendChild(opcija);
+                    });
+
+                    pasmina.disabled = false;
+
+                    if (odabrano) {
+                        pasmina.value = odabrano;
+                    }
+                });
+        }
+
+        vrsta.addEventListener('change', function () { ucitajPasmine(null); });
+
+        const prethodnoOdabrano = pasmina.dataset.odabrano;
+
+        if (vrsta.value) {
+            ucitajPasmine(prethodnoOdabrano);
+        }
+    })();
+</script>

@@ -1,0 +1,523 @@
+﻿@model ZavrsniRad.Models.Zivotinje
+
+@{
+    ViewData["Title"] = "UreÄ‘ivanje ljubimca";
+
+    var prehrana = ViewBag.Prehrana as List<ZavrsniRad.Models.Prehrana>
+        ?? new List<ZavrsniRad.Models.Prehrana>();
+
+    var zdravstveniZapisi = ViewBag.ZdravstveniZapisi as List<ZavrsniRad.Models.ZdravstveniZapisi>
+        ?? new List<ZavrsniRad.Models.ZdravstveniZapisi>();
+
+    var identifikacijskeOznake =
+        ViewBag.IdentifikacijskeOznake as List<ZavrsniRad.Models.ViewModels.IdentifikacijskaOznakaViewModel>
+        ?? new List<ZavrsniRad.Models.ViewModels.IdentifikacijskaOznakaViewModel>();
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h2 class="mb-1">UreÄ‘ivanje ljubimca</h2>
+
+            <p class="text-secondary mb-0">
+                @Model.Naziv
+            </p>
+        </div>
+
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Natrag na popis
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Osnovni podaci</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="Naziv" class="form-label"></label>
+                        <input asp-for="Naziv" class="form-control" />
+                        <span asp-validation-for="Naziv" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Boja" class="form-label"></label>
+                        <input asp-for="Boja" class="form-control" />
+                        <span asp-validation-for="Boja" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="vrstaZivotinjaId" class="form-label">
+                            Vrsta Å¾ivotinje
+                        </label>
+
+                        <select id="vrstaZivotinjaId"
+                                name="vrstaZivotinjaId"
+                                class="form-select"
+                                asp-items="ViewBag.VrsteZivotinja as SelectList">
+                            <option value="">-- Odaberite vrstu --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Pasmina</label>
+
+                        <select asp-for="VrstaZivotinjePasminaId"
+                                id="VrstaZivotinjePasminaId"
+                                class="form-select"
+                                data-odabrano="@Model.VrstaZivotinjePasminaId">
+                            <option value="">-- Prvo odaberite vrstu --</option>
+                        </select>
+
+                        <span asp-validation-for="VrstaZivotinjePasminaId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Spol</label>
+
+                        <select asp-for="SpolId"
+                                class="form-select"
+                                asp-items="ViewBag.Spol as SelectList">
+                            <option value="">-- Odaberite spol --</option>
+                        </select>
+
+                        <span asp-validation-for="SpolId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Status</label>
+
+                        <select asp-for="StatusId"
+                                class="form-select"
+                                asp-items="ViewBag.StatusLjubimca as SelectList">
+                            <option value="">-- Odaberite status --</option>
+                        </select>
+
+                        <span asp-validation-for="StatusId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DatumRodenja" class="form-label"></label>
+                        <input asp-for="DatumRodenja" type="date" class="form-control" />
+                        <span asp-validation-for="DatumRodenja" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white pb-0">
+            <ul class="nav nav-tabs card-header-tabs" id="ljubimacTabs" role="tablist">
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active"
+                            id="prehrana-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#prehrana"
+                            type="button"
+                            role="tab"
+                            aria-controls="prehrana"
+                            aria-selected="true">
+                        Prehrana
+                    </button>
+                </li>
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="zdravstveni-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#zdravstveni"
+                            type="button"
+                            role="tab"
+                            aria-controls="zdravstveni"
+                            aria-selected="false">
+                        Zdravstveni zapisi
+                    </button>
+                </li>
+
+                @foreach (var oznakaTab in identifikacijskeOznake)
+                {
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link"
+                                id="@(oznakaTab.IdTaba)-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#@oznakaTab.IdTaba"
+                                type="button"
+                                role="tab"
+                                aria-controls="@oznakaTab.IdTaba"
+                                aria-selected="false">
+                            @oznakaTab.NazivTaba
+                        </button>
+                    </li>
+                }
+
+            </ul>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="tab-content" id="ljubimacTabsContent">
+
+                <div class="tab-pane fade show active"
+                     id="prehrana"
+                     role="tabpanel"
+                     aria-labelledby="prehrana-tab">
+
+                    @if (prehrana.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-bordered mb-0">
+
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>Naziv</th>
+                                        <th>Vrsta hrane</th>
+                                        <th>Naziv hrane</th>
+                                        <th>ProizvoÄ‘aÄ</th>
+                                        <th>KoliÄina</th>
+                                        <th>Broj obroka</th>
+
+                                        <th class="text-center">
+                                            Akcije
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var stavka in prehrana)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">
+                                                @stavka.Naziv
+                                            </td>
+
+                                            <td>
+                                                @stavka.VrstaHrane
+                                            </td>
+
+                                            <td>
+                                                @stavka.NazivHrane
+                                            </td>
+
+                                            <td>
+                                                @stavka.Proizvodac
+                                            </td>
+
+                                            <td>
+                                                @stavka.KolicinaHrane
+                                            </td>
+
+                                            <td>
+                                                @stavka.BrojObrokaDnevno
+                                            </td>
+
+                                            <td class="text-center text-nowrap">
+                                                <button type="button"
+                                                        class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#prehranaModal"
+                                                        data-id="@stavka.Id"
+                                                        data-naziv="@stavka.Naziv"
+                                                        data-vrstahrane="@stavka.VrstaHrane"
+                                                        data-nazivhrane="@stavka.NazivHrane"
+                                                        data-proizvodac="@stavka.Proizvodac"
+                                                        data-kolicina="@stavka.KolicinaHrane"
+                                                        data-brojobroka="@stavka.BrojObrokaDnevno"
+                                                        data-namirnice="@stavka.NamirniceZaIzbjegavanje"
+                                                        data-napomena="@stavka.Napomena">
+                                                    Uredi
+                                                </button>
+
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deletePrehranaModal"
+                                                        data-id="@stavka.Id"
+                                                        data-naziv="@stavka.Naziv">
+                                                    ObriÅ¡i
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <h5 class="mb-2">
+                                Nema evidentirane prehrane
+                            </h5>
+
+                            <p class="text-secondary mb-3">
+                                Ljubimcu joÅ¡ nije dodan nijedan podatak o prehrani.
+                            </p>
+
+                            <button type="button"
+                                    class="btn btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#prehranaModal">
+                                Dodaj prvu prehranu
+                            </button>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-end p-3">
+                        <button type="button"
+                                class="btn btn-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#prehranaModal">
+                            Dodaj novu prehranu
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade"
+                     id="zdravstveni"
+                     role="tabpanel"
+                     aria-labelledby="zdravstveni-tab">
+
+                    @if (zdravstveniZapisi.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-bordered mb-0">
+
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>Datum</th>
+                                        <th>Vrsta zapisa</th>
+                                        <th>Opis</th>
+
+                                        <th class="text-center">
+                                            Akcije
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var zapis in zdravstveniZapisi)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold text-nowrap">
+                                                @zapis.Datum.ToString("dd.MM.yyyy.")
+                                            </td>
+
+                                            <td>
+                                                @zapis.ZdravstveniZapisiVrste?.Naziv
+                                            </td>
+
+                                            <td>
+                                                @zapis.Opis
+                                            </td>
+
+                                            <td class="text-center text-nowrap">
+                                                <button type="button"
+                                                        class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#zdravstveniModal"
+                                                        data-id="@zapis.Id"
+                                                        data-vrstaid="@zapis.VrstaZdravstvenogZapisaId"
+                                                        data-datum="@zapis.Datum.ToString("yyyy-MM-dd")"
+                                                        data-opis="@zapis.Opis">
+                                                    Uredi
+                                                </button>
+
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteZdravstveniModal"
+                                                        data-id="@zapis.Id"
+                                                        data-naziv="@zapis.Datum.ToString("dd.MM.yyyy.") - @zapis.ZdravstveniZapisiVrste?.Naziv">
+                                                    ObriÅ¡i
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <h5 class="mb-2">
+                                Nema evidentiranih zdravstvenih zapisa
+                            </h5>
+
+                            <p class="text-secondary mb-3">
+                                Ljubimcu joÅ¡ nije dodan nijedan zdravstveni zapis.
+                            </p>
+
+                            <button type="button"
+                                    class="btn btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#zdravstveniModal">
+                                Dodaj prvi zdravstveni zapis
+                            </button>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-end p-3">
+                        <button type="button"
+                                class="btn btn-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#zdravstveniModal">
+                            Dodaj novi zdravstveni zapis
+                        </button>
+                    </div>
+
+                </div>
+
+                @foreach (var oznakaTab in identifikacijskeOznake)
+                {
+                    <div class="tab-pane fade"
+                         id="@oznakaTab.IdTaba"
+                         role="tabpanel"
+                         aria-labelledby="@(oznakaTab.IdTaba)-tab">
+
+                        @await Html.PartialAsync("_IdentifikacijskaOznaka", oznakaTab,
+                            new ViewDataDictionary(ViewData)
+                            {
+                                { "ZivotinjaId", Model.Id }
+                            })
+
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@await Html.PartialAsync("_PrehranaModal",
+    ViewBag.NovaPrehrana as ZavrsniRad.Models.Prehrana
+        ?? new ZavrsniRad.Models.Prehrana
+        {
+            ZivotinjaId = Model.Id,
+            Naziv = ""
+        })
+
+@await Html.PartialAsync("_DeletePrehranaModal")
+
+@await Html.PartialAsync("_ZdravstveniZapisModal",
+    ViewBag.NoviZdravstveniZapis as ZavrsniRad.Models.ZdravstveniZapisi
+        ?? new ZavrsniRad.Models.ZdravstveniZapisi
+        {
+            ZivotinjaId = Model.Id,
+            Opis = "",
+            Datum = DateTime.Today
+        })
+
+@await Html.PartialAsync("_DeleteZdravstveniModal")
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (ViewBag.OtvoriPrehranaModal == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Tab(document.getElementById('prehrana-tab')).show();
+
+                new bootstrap.Modal(
+                    document.getElementById('prehranaModal')).show();
+            });
+        </script>
+    }
+
+    @if (ViewBag.OtvoriZdravstveniModal == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                new bootstrap.Tab(document.getElementById('zdravstveni-tab')).show();
+
+                new bootstrap.Modal(
+                    document.getElementById('zdravstveniModal')).show();
+            });
+        </script>
+    }
+
+    @if (ViewBag.OtvoriOznakuTabId != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tab = document.getElementById('@(ViewBag.OtvoriOznakuTabId)-tab');
+
+                if (tab) {
+                    new bootstrap.Tab(tab).show();
+                }
+            });
+        </script>
+    }
+
+    <script>
+        (function () {
+            const vrsta = document.getElementById('vrstaZivotinjaId');
+            const pasmina = document.getElementById('VrstaZivotinjePasminaId');
+            const url = '@Url.Action("PasminePoVrsti", "Ljubimci")';
+
+            function ucitajPasmine(odabrano) {
+                const vrstaId = vrsta.value;
+
+                pasmina.innerHTML = '';
+
+                if (!vrstaId) {
+                    pasmina.insertAdjacentHTML('beforeend',
+                        '<option value="">-- Prvo odaberite vrstu --</option>');
+                    return;
+                }
+
+                fetch(url + '?vrstaZivotinjaId=' + encodeURIComponent(vrstaId))
+                    .then(function (odgovor) { return odgovor.json(); })
+                    .then(function (podaci) {
+                        pasmina.insertAdjacentHTML('beforeend',
+                            '<option value="">-- Odaberite pasminu --</option>');
+
+                        podaci.forEach(function (stavka) {
+                            const opcija = document.createElement('option');
+                            opcija.value = stavka.id;
+                            opcija.textContent = stavka.naziv;
+                            pasmina.appendChild(opcija);
+                        });
+
+                        if (odabrano) {
+                            pasmina.value = odabrano;
+                        }
+                    });
+            }
+
+            vrsta.addEventListener('change', function () { ucitajPasmine(null); });
+
+            if (vrsta.value) {
+                ucitajPasmine(pasmina.dataset.odabrano);
+            }
+        })();
+    </script>
+}

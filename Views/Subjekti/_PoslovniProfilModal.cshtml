@@ -1,0 +1,256 @@
+﻿@model ZavrsniRad.Models.ViewModels.PoslovniProfilViewModel
+
+@{
+    var pravniOblici = ViewBag.PravniOblici as List<ZavrsniRad.Models.PravniOblici>
+        ?? new List<ZavrsniRad.Models.PravniOblici>();
+
+    var djelatnosti = ViewBag.Djelatnosti as List<ZavrsniRad.Models.Djelatnosti>
+        ?? new List<ZavrsniRad.Models.Djelatnosti>();
+
+    int subjektId = (int)ViewData["SubjektId"]!;
+
+    int fizickaOsoba = (int)ZavrsniRad.Models.Enums.VrstaOsobe.FizickaOsoba;
+    int pravnaOsoba = (int)ZavrsniRad.Models.Enums.VrstaOsobe.PravnaOsoba;
+    int obrt = (int)ZavrsniRad.Models.Enums.VrstaSubjekta.Obrt;
+    int trgovackoDrustvo = (int)ZavrsniRad.Models.Enums.VrstaSubjekta.TrgovackoDrustvo;
+    int zakonOObrtu = (int)ZavrsniRad.Models.Enums.PravniOblik.ZakonOObrtu;
+    int doo = (int)ZavrsniRad.Models.Enums.PravniOblik.DrustvoSOgranicenomOdgovornoscu;
+}
+
+<div class="modal fade" id="poslovniProfilModal" tabindex="-1"
+     aria-labelledby="poslovniProfilModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <form asp-action="DodajPoslovniProfil" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" value="@subjektId" />
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="poslovniProfilModalLabel">
+                        Dodaj poslovni profil
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label asp-for="VrstaOsobeId" class="form-label"></label>
+
+                            <select asp-for="VrstaOsobeId" id="ppVrstaOsobeId" class="form-select">
+                                <option value="">-- Odaberite vrstu osobe --</option>
+                                <option value="@fizickaOsoba">FiziÄka osoba</option>
+                                <option value="@pravnaOsoba">Pravna osoba</option>
+                            </select>
+
+                            <span asp-validation-for="VrstaOsobeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="VrstaSubjektaId" class="form-label"></label>
+
+                            <select asp-for="VrstaSubjektaId" id="ppVrstaSubjektaId" class="form-select">
+                                <option value="">-- Odaberite vrstu subjekta --</option>
+                                <option value="@obrt" data-vrsta-osobe="@fizickaOsoba">Obrt</option>
+                                <option value="@trgovackoDrustvo" data-vrsta-osobe="@pravnaOsoba">TrgovaÄko druÅ¡tvo</option>
+                            </select>
+
+                            <span asp-validation-for="VrstaSubjektaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Ime" class="form-label"></label>
+                            <input asp-for="Ime" class="form-control" />
+                            <span asp-validation-for="Ime" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Prezime" class="form-label"></label>
+                            <input asp-for="Prezime" class="form-control" />
+                            <span asp-validation-for="Prezime" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="NazivTvrtke" class="form-label"></label>
+                            <input asp-for="NazivTvrtke" class="form-control" />
+                            <span asp-validation-for="NazivTvrtke" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Telefon" class="form-label"></label>
+                            <input asp-for="Telefon" class="form-control" />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    <div id="ppDetalji" class="mt-4 d-none">
+
+                        <h6 class="text-success fw-semibold mb-3">
+                            Podaci o poslovnom subjektu
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label asp-for="OIB" class="form-label"></label>
+                                <input asp-for="OIB" class="form-control" />
+                                <span asp-validation-for="OIB" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="MB" class="form-label"></label>
+                                <input asp-for="MB" class="form-control" />
+                                <span asp-validation-for="MB" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="MBO" class="form-label"></label>
+                                <input asp-for="MBO" class="form-control" />
+                                <span asp-validation-for="MBO" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 d-none" id="ppMbsBlok">
+                                <label asp-for="MBS" class="form-label"></label>
+                                <input asp-for="MBS" id="ppMbs" class="form-control" />
+                                <span asp-validation-for="MBS" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="DatumOsnivanja" class="form-label"></label>
+                                <input asp-for="DatumOsnivanja" type="date" class="form-control" />
+                                <span asp-validation-for="DatumOsnivanja" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label asp-for="PravniOblikId" class="form-label"></label>
+
+                                <select asp-for="PravniOblikId" id="ppPravniOblikId" class="form-select">
+                                    <option value="">-- Odaberite pravni oblik --</option>
+                                    @foreach (var oblik in pravniOblici)
+                                    {
+                                        <option value="@oblik.Id"
+                                                data-vrsta-osobe="@(oblik.Id == zakonOObrtu ? fizickaOsoba : (oblik.Id == doo ? pravnaOsoba : 0))">
+                                            @oblik.Naziv
+                                        </option>
+                                    }
+                                </select>
+
+                                <span asp-validation-for="PravniOblikId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label asp-for="DjelatnostId" class="form-label"></label>
+
+                                <select asp-for="DjelatnostId" class="form-select">
+                                    @foreach (var djelatnost in djelatnosti)
+                                    {
+                                        <option value="@djelatnost.Id">
+                                            @djelatnost.Oznaka - @djelatnost.Naziv
+                                        </option>
+                                    }
+                                </select>
+
+                                <span asp-validation-for="DjelatnostId" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const fizicka = '@fizickaOsoba';
+
+        const vrstaOsobe = document.getElementById('ppVrstaOsobeId');
+        const vrstaSubjekta = document.getElementById('ppVrstaSubjektaId');
+        const pravniOblik = document.getElementById('ppPravniOblikId');
+        const detalji = document.getElementById('ppDetalji');
+        const mbsBlok = document.getElementById('ppMbsBlok');
+        const mbs = document.getElementById('ppMbs');
+
+        function filtrirajOpcije(select, odabranaVrsta) {
+            let vrijediOdabrano = false;
+
+            Array.from(select.options).forEach(function (opcija) {
+                if (!opcija.value) {
+                    return;
+                }
+
+                const pripada = opcija.getAttribute('data-vrsta-osobe') === odabranaVrsta;
+
+                opcija.hidden = !pripada;
+                opcija.disabled = !pripada;
+
+                if (pripada) {
+                    if (!vrijediOdabrano) {
+                        select.value = opcija.value;
+                        vrijediOdabrano = true;
+                    }
+                }
+            });
+
+            if (!vrijediOdabrano) {
+                select.value = '';
+            }
+        }
+
+        function osvjezi() {
+            const odabrana = vrstaOsobe.value;
+
+            if (!odabrana) {
+                detalji.classList.add('d-none');
+                vrstaSubjekta.value = '';
+                pravniOblik.value = '';
+                return;
+            }
+
+            detalji.classList.remove('d-none');
+
+            filtrirajOpcije(vrstaSubjekta, odabrana);
+            filtrirajOpcije(pravniOblik, odabrana);
+
+            const jeFizicka = odabrana === fizicka;
+
+            mbsBlok.classList.toggle('d-none', jeFizicka);
+
+            if (jeFizicka) {
+                mbs.value = '';
+            }
+        }
+
+        vrstaOsobe.addEventListener('change', osvjezi);
+
+        osvjezi();
+    })();
+</script>

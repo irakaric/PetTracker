@@ -1,0 +1,146 @@
+﻿@model ZavrsniRad.Models.Prehrana
+
+<div class="modal fade" id="prehranaModal" tabindex="-1"
+     aria-labelledby="prehranaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="SpremiPrehranu" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" id="prehranaId" />
+                <input type="hidden" asp-for="ZivotinjaId" />
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="prehranaModalLabel">
+                        Dodaj novu prehranu
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label asp-for="Naziv" class="form-label"></label>
+                            <input asp-for="Naziv" id="prehranaNaziv" class="form-control" />
+                            <span asp-validation-for="Naziv" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="VrstaHrane" class="form-label"></label>
+                            <input asp-for="VrstaHrane" id="prehranaVrstaHrane" class="form-control" />
+                            <span asp-validation-for="VrstaHrane" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NazivHrane" class="form-label"></label>
+                            <input asp-for="NazivHrane" id="prehranaNazivHrane" class="form-control" />
+                            <span asp-validation-for="NazivHrane" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Proizvodac" class="form-label"></label>
+                            <input asp-for="Proizvodac" id="prehranaProizvodac" class="form-control" />
+                            <span asp-validation-for="Proizvodac" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="KolicinaHrane" class="form-label"></label>
+                            <input asp-for="KolicinaHrane" id="prehranaKolicinaHrane" class="form-control" />
+                            <span asp-validation-for="KolicinaHrane" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="BrojObrokaDnevno" class="form-label"></label>
+                            <input asp-for="BrojObrokaDnevno" id="prehranaBrojObroka"
+                                   type="number" min="0" class="form-control" />
+                            <span asp-validation-for="BrojObrokaDnevno" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="NamirniceZaIzbjegavanje" class="form-label"></label>
+                            <textarea asp-for="NamirniceZaIzbjegavanje" id="prehranaNamirnice"
+                                      class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="NamirniceZaIzbjegavanje" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Napomena" class="form-label"></label>
+                            <textarea asp-for="Napomena" id="prehranaNapomena"
+                                      class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Napomena" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById('prehranaModal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            const naslov = document.getElementById('prehranaModalLabel');
+            const id = document.getElementById('prehranaId');
+            const naziv = document.getElementById('prehranaNaziv');
+            const vrstaHrane = document.getElementById('prehranaVrstaHrane');
+            const nazivHrane = document.getElementById('prehranaNazivHrane');
+            const proizvodac = document.getElementById('prehranaProizvodac');
+            const kolicina = document.getElementById('prehranaKolicinaHrane');
+            const brojObroka = document.getElementById('prehranaBrojObroka');
+            const namirnice = document.getElementById('prehranaNamirnice');
+            const napomena = document.getElementById('prehranaNapomena');
+
+            if (!gumb || !gumb.getAttribute('data-id')) {
+                naslov.textContent = 'Dodaj novu prehranu';
+
+                id.value = '0';
+                naziv.value = '';
+                vrstaHrane.value = '';
+                nazivHrane.value = '';
+                proizvodac.value = '';
+                kolicina.value = '';
+                brojObroka.value = '';
+                namirnice.value = '';
+                napomena.value = '';
+
+                return;
+            }
+
+            naslov.textContent = 'UreÄ‘ivanje prehrane';
+
+            id.value = gumb.getAttribute('data-id');
+            naziv.value = gumb.getAttribute('data-naziv');
+            vrstaHrane.value = gumb.getAttribute('data-vrstahrane');
+            nazivHrane.value = gumb.getAttribute('data-nazivhrane');
+            proizvodac.value = gumb.getAttribute('data-proizvodac');
+            kolicina.value = gumb.getAttribute('data-kolicina');
+            brojObroka.value = gumb.getAttribute('data-brojobroka');
+            namirnice.value = gumb.getAttribute('data-namirnice');
+            napomena.value = gumb.getAttribute('data-napomena');
+        });
+    })();
+</script>

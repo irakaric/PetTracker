@@ -1,0 +1,107 @@
+﻿@model ZavrsniRad.Models.ZdravstveniZapisi
+
+<div class="modal fade" id="zdravstveniModal" tabindex="-1"
+     aria-labelledby="zdravstveniModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="SpremiZdravstveniZapis" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" id="zdravstveniId" />
+                <input type="hidden" asp-for="ZivotinjaId" />
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="zdravstveniModalLabel">
+                        Dodaj novi zdravstveni zapis
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vrsta zdravstvenog zapisa</label>
+
+                            <select asp-for="VrstaZdravstvenogZapisaId"
+                                    id="zdravstveniVrstaId"
+                                    class="form-select"
+                                    asp-items="ViewBag.VrsteZdravstvenihZapisa as SelectList">
+                                <option value="">-- Odaberite vrstu --</option>
+                            </select>
+
+                            <span asp-validation-for="VrstaZdravstvenogZapisaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Datum" class="form-label"></label>
+                            <input asp-for="Datum" id="zdravstveniDatum"
+                                   type="date" class="form-control" />
+                            <span asp-validation-for="Datum" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Opis" class="form-label"></label>
+                            <textarea asp-for="Opis" id="zdravstveniOpis"
+                                      class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Opis" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Spremi
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById('zdravstveniModal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            const naslov = document.getElementById('zdravstveniModalLabel');
+            const id = document.getElementById('zdravstveniId');
+            const vrsta = document.getElementById('zdravstveniVrstaId');
+            const datum = document.getElementById('zdravstveniDatum');
+            const opis = document.getElementById('zdravstveniOpis');
+
+            if (!gumb || !gumb.getAttribute('data-id')) {
+                naslov.textContent = 'Dodaj novi zdravstveni zapis';
+
+                id.value = '0';
+                vrsta.value = '';
+                datum.value = '';
+                opis.value = '';
+
+                return;
+            }
+
+            naslov.textContent = 'UreÄ‘ivanje zdravstvenog zapisa';
+
+            id.value = gumb.getAttribute('data-id');
+            vrsta.value = gumb.getAttribute('data-vrstaid');
+            datum.value = gumb.getAttribute('data-datum');
+            opis.value = gumb.getAttribute('data-opis');
+        });
+    })();
+</script>

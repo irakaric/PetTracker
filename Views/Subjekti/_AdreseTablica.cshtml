@@ -1,0 +1,115 @@
+﻿@model List<ZavrsniRad.Models.ViewModels.AdresaPrikazViewModel>
+
+@{
+    var povratniSubjektId = ViewData["PovratniSubjektId"] as int?;
+}
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered mb-0">
+
+            <thead class="table-success">
+                <tr>
+                    <th>Subjekt</th>
+                    <th>Vrsta adrese</th>
+                    <th>Ulica</th>
+                    <th>KuÄ‡ni broj</th>
+                    <th>Naselje</th>
+                    <th>PoÅ¡tanski broj</th>
+                    <th>Å½upanija</th>
+                    <th>DrÅ¾ava</th>
+
+                    <th class="text-center">
+                        Akcije
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var stavka in Model)
+                {
+                    var adresa = stavka.Adresa;
+
+                    <tr>
+                        <td class="fw-semibold">
+                            @stavka.NazivSubjekta
+                        </td>
+
+                        <td>
+                            @adresa.VrstaAdresa?.Naziv
+                        </td>
+
+                        <td>
+                            @adresa.Ulica
+                        </td>
+
+                        <td>
+                            @adresa.KucniBroj
+                        </td>
+
+                        <td>
+                            @adresa.Naselja?.Naziv
+                        </td>
+
+                        <td>
+                            @adresa.Naselja?.PostanskiBroj
+                        </td>
+
+                        <td>
+                            @adresa.Naselja?.Zupanije?.Naziv
+                        </td>
+
+                        <td>
+                            @adresa.Naselja?.Drzave?.Naziv
+                        </td>
+
+                        <td class="text-center text-nowrap">
+                            <button type="button"
+                                    class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#@(stavka.Prefiks)Modal"
+                                    data-id="@adresa.Id"
+                                    data-ulica="@adresa.Ulica"
+                                    data-kucnibroj="@adresa.KucniBroj"
+                                    data-vrstaadreseid="@adresa.VrstaAdreseId"
+                                    data-naseljeid="@adresa.NaseljeId">
+                                Uredi
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteAdresaModal"
+                                    data-id="@adresa.Id"
+                                    data-povratnisubjektid="@povratniSubjektId"
+                                    data-naziv="@adresa.Ulica @adresa.KucniBroj">
+                                ObriÅ¡i
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <h5 class="mb-2">
+            Nema evidentiranih adresa
+        </h5>
+
+        <p class="text-secondary mb-3">
+            Subjektu joÅ¡ nije dodana nijedna adresa.
+        </p>
+
+        <button type="button"
+                class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#adresaModal">
+            Dodaj prvu adresu
+        </button>
+    </div>
+}

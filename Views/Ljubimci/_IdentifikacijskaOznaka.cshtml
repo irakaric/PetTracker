@@ -1,0 +1,192 @@
+﻿@model ZavrsniRad.Models.ViewModels.IdentifikacijskaOznakaViewModel
+
+@{
+    var zivotinjaId = (int)ViewData["ZivotinjaId"]!;
+    var vrstaId = (int)Model.Vrsta;
+
+    var oznaka = Model.Oznaka;
+    var prefiks = "oznaka" + vrstaId;
+}
+
+<form asp-action="SpremiIdentifikacijskuOznaku" method="post" class="p-3">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="Id" value="@(oznaka?.Id ?? 0)" />
+    <input type="hidden" name="ZivotinjaId" value="@zivotinjaId" />
+    <input type="hidden" name="VrstaIdentifikacijskeOznakeId" value="@vrstaId" />
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label" for="@(prefiks)Oznaka">
+                @Model.OznakaLabela
+            </label>
+
+            <input type="text" class="form-control"
+                   id="@(prefiks)Oznaka" name="Oznaka"
+                   maxlength="50" required
+                   value="@oznaka?.Oznaka" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label" for="@(prefiks)DatumIzdavanja">
+                Datum izdavanja
+            </label>
+
+            <input type="date" class="form-control"
+                   id="@(prefiks)DatumIzdavanja" name="DatumIzdavanja"
+                   value="@((oznaka?.DatumIzdavanja ?? DateTime.Today).ToString("yyyy-MM-dd"))" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label" for="@(prefiks)DrzavaId">
+                DrÅ¾ava izdavanja
+            </label>
+
+            <select class="form-select"
+                    id="@(prefiks)DrzavaId" name="DrzavaId"
+                    asp-items="@(new SelectList(
+                        (ViewBag.Drzave as SelectList)!.Items,
+                        "Id", "Naziv", oznaka?.DrzavaId))">
+                <option value="">-- Odaberite drÅ¾avu --</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label" for="@(prefiks)Oznacavatelj">
+                @Model.OznacavateljLabela
+            </label>
+
+            <input type="text" class="form-control"
+                   id="@(prefiks)Oznacavatelj" name="Oznacavatelj"
+                   maxlength="50" required
+                   value="@oznaka?.Oznacavatelj" />
+        </div>
+
+        @if (Model.Vrsta == ZavrsniRad.Models.Enums.VrstaIdentifikacijskeOznake.Mikrocip)
+        {
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)MjestoImplantacije">
+                    Mjesto implantacije
+                </label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)MjestoImplantacije" name="mjestoImplantacije"
+                       maxlength="100" required
+                       value="@Model.DetaljiMikrocipa?.MjestoImplantacije" />
+            </div>
+        }
+
+        @if (Model.Vrsta == ZavrsniRad.Models.Enums.VrstaIdentifikacijskeOznake.Prsten)
+        {
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)TipPrstenaId">
+                    Tip prstena
+                </label>
+
+                <select class="form-select"
+                        id="@(prefiks)TipPrstenaId" name="tipPrstenaId"
+                        asp-items="@(new SelectList(
+                            (ViewBag.TipoviPrstena as SelectList)!.Items,
+                            "Id", "Naziv", Model.DetaljiPrstena?.TipPrstenaId))">
+                    <option value="">-- Odaberite tip --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)Noga">Noga</label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)Noga" name="noga"
+                       maxlength="10" required
+                       value="@Model.DetaljiPrstena?.Noga" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)BojaPrstena">Boja</label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)BojaPrstena" name="bojaPrstena"
+                       maxlength="20" required
+                       value="@Model.DetaljiPrstena?.Boja" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)Materijal">Materijal</label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)Materijal" name="materijal"
+                       maxlength="50" required
+                       value="@Model.DetaljiPrstena?.Materijal" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)UnutarnjiPromjer">
+                    Unutarnji promjer
+                </label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)UnutarnjiPromjer" name="unutarnjiPromjer"
+                       maxlength="50" required
+                       value="@Model.DetaljiPrstena?.UnutarnjiPromjer" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)Godina">
+                    Godina na prstenu
+                </label>
+
+                <input type="number" class="form-control"
+                       id="@(prefiks)Godina" name="godina"
+                       min="1900" max="2100"
+                       value="@(Model.DetaljiPrstena?.Godina ?? DateTime.Today.Year)" />
+            </div>
+        }
+
+        @if (Model.Vrsta == ZavrsniRad.Models.Enums.VrstaIdentifikacijskeOznake.Tetovaza)
+        {
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)PolozajTetovaze">
+                    PoloÅ¾aj tetovaÅ¾e
+                </label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)PolozajTetovaze" name="polozajTetovaze"
+                       maxlength="50" required
+                       value="@Model.DetaljiTetovaze?.PolozajTetovaze" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" for="@(prefiks)BojaTetovaze">Boja</label>
+
+                <input type="text" class="form-control"
+                       id="@(prefiks)BojaTetovaze" name="bojaTetovaze"
+                       maxlength="50" required
+                       value="@Model.DetaljiTetovaze?.Boja" />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label" for="@(prefiks)OpisTetovaze">Opis</label>
+
+                <textarea class="form-control" rows="2"
+                          id="@(prefiks)OpisTetovaze" name="opisTetovaze"
+                          maxlength="500">@Model.DetaljiTetovaze?.Opis</textarea>
+            </div>
+        }
+
+        <div class="col-12">
+            <label class="form-label" for="@(prefiks)Napomena">Napomena</label>
+
+            <textarea class="form-control" rows="2"
+                      id="@(prefiks)Napomena" name="Napomena"
+                      maxlength="500">@oznaka?.Napomena</textarea>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-success">
+            Spremi
+        </button>
+    </div>
+</form>

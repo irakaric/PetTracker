@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>PetTracker - Prijava</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/ZavrsniRad.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100">
+
+            <div class="col-md-6 bg-success text-white
+                d-flex align-items-center justify-content-center">
+
+                <div class="col-10 col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">
+                        PetTracker
+                    </h1>
+
+                    <p class="fs-5 mb-0">
+                        Aplikacija za praćenje i upravljanje
+                        podacima o ljubimcima.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 bg-white
+                d-flex align-items-center justify-content-center">
+
+                <div class="col-10 col-sm-8 col-md-10 col-lg-8 col-xl-7 py-5">
+
+                    <h2 class="fw-bold mb-2">
+                        Prijava
+                    </h2>
+
+                    <p class="text-secondary mb-4">
+                        Unesite podatke za prijavu u aplikaciju.
+                    </p>
+
+                    <form asp-controller="Account"
+                          asp-action="Login"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="korisnickoIme"
+                                   class="form-label">
+                                Korisničko ime
+                            </label>
+
+                            <input type="text"
+                                   id="korisnickoIme"
+                                   name="korisnickoIme"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="lozinka"
+                                   class="form-label">
+                                Lozinka
+                            </label>
+
+                            <input type="password"
+                                   id="lozinka"
+                                   name="lozinka"
+                                   class="form-control"
+                                   autocomplete="current-password"
+                                   required />
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-success w-100">
+                            Prijavi se
+                        </button>
+
+                        <hr class="my-4" />
+
+                        <div class="text-center">
+                            <span class="text-secondary">
+                                Nemate korisnički račun?
+                            </span>
+
+                            <a asp-controller="Account"
+                               asp-action="Registracija"
+                               class="link-success fw-semibold
+                                text-decoration-none">
+                                Registrirajte se
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+</body>
+</html>

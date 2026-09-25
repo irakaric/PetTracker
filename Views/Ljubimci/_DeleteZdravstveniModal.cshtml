@@ -1,0 +1,58 @@
+﻿
+<div class="modal fade" id="deleteZdravstveniModal" tabindex="-1"
+     aria-labelledby="deleteZdravstveniModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="ObrisiZdravstveniZapis" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" id="deleteZdravstveniId" />
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteZdravstveniModalLabel">
+                        Brisanje zdravstvenog zapisa
+                    </h5>
+
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Jeste li sigurni da Å¾elite obrisati zdravstveni zapis
+                        <strong id="deleteZdravstveniNaziv"></strong>?
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">
+                        ObriÅ¡i
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Odustani
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById('deleteZdravstveniModal');
+
+        modal.addEventListener('show.bs.modal', function (dogadaj) {
+            const gumb = dogadaj.relatedTarget;
+
+            document.getElementById('deleteZdravstveniId').value =
+                gumb.getAttribute('data-id');
+
+            document.getElementById('deleteZdravstveniNaziv').textContent =
+                gumb.getAttribute('data-naziv');
+        });
+    })();
+</script>
